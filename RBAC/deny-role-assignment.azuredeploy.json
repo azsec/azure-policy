@@ -1,0 +1,75 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2018-05-01/subscriptionDeploymentTemplate.json#",
+  "contentVersion": "1.0.0.0",
+  "variables": {
+    "policyName": "deny-database-admin-role",
+    "policyDisplayName": "Ensure Database Admin role is assigned to Database Admin group",
+    "policyDescription": "This policy is used to ensure Database Admin role is assigned to Database Admin group",
+    "metadata": "IAM"
+  },
+  "resources": [
+    {
+      "type": "Microsoft.Authorization/policyDefinitions",
+      "name": "[variables('policyName')]",
+      "apiVersion": "2019-09-01",
+      "properties": {
+        "displayName": "[variables('policyDisplayName')]",
+        "policyType": "Custom",
+        "description": "[variables('policyDescription')]",
+        "metadata": "[variables('metadata')]",
+        "mode": "All",
+        "parameters": {
+          "dBAdminRoleDefId": {
+            "type": "string",
+            "defaultValue": "7c3caeca-1234-482f-bb99-1c4000523fb5",
+            "metadata": {
+              "description": "Role Definition ID of Db Admin Role",
+              "displayName": "Role Definition ID of Db Admin Role"
+            }
+          },
+          "dbAdminGroupId": {
+            "type": "string",
+            "defaultValue": "76a59d8e-4aad-1234-a8aa-e4a3dd12csb5",
+            "metadata": {
+              "description": "ID of Database Admin group in AAD",
+              "displayName": "ID of Database Admin group in AAD"
+            }
+          },
+          "effect": {
+            "type": "string",
+            "metadata": {
+              "displayName": "Effect",
+              "description": "Effect of this Azure Policy - Audit, Deny or Disabled"
+            },
+            "allowedValues": ["Audit", "Deny", "Disabled"]
+          }
+        },
+        "policyRule": {
+          "if": {
+            "anyOf": [
+              {
+                "allOf": [
+                  {
+                    "field": "type",
+                    "equals": "Microsoft.Authorization/roleAssignments"
+                  },
+                  {
+                    "field": "Microsoft.Authorization/roleAssignments/roleDefinitionId",
+                    "contains": "[[parameters('dBAdminRoleDefId')]"
+                  },
+                  {
+                    "field": "Microsoft.Authorization/roleAssignments/principalId",
+                    "notEquals": "[[parameters('dbAdminGroupId')]"
+                  }
+                ]
+              }
+            ]
+          },
+          "then": {
+            "effect": "[[parameters('effect')]"
+          }
+        }
+      }
+    }
+  ]
+}

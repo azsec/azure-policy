@@ -1,0 +1,21 @@
+{
+  "if": {
+    "allOf": [
+      {
+        "field": "type",
+        "equals": "Microsoft.Authorization/roleAssignments"
+      },
+      {
+        "field": "Microsoft.Authorization/roleAssignments/roleDefinitionId",
+        "contains": "ea940f7f-9b62-43cf-8ef6-8c303283ac7d"
+      },
+      {
+        "field": "Microsoft.Authorization/roleAssignments/principalId",
+        "notEquals": "9f00fbdb-6771-4011-8f49-04d79adc0bb4"
+      }
+    ]
+  },
+  "then": {
+    "effect": "deny"
+  }
+}
