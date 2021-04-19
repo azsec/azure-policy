@@ -1,0 +1,75 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2018-05-01/subscriptionDeploymentTemplate.json#",
+  "contentVersion": "1.0.0.0",
+  "variables": {
+    "policyName": "deny-owner-role-assignment",
+    "policyDisplayName": "Ensure Owner role is only assigned to specific group",
+    "policyDescription": "This policy is used to ensure Owner role is only assigned to specific group",
+    "metadata": "IAM"
+  },
+  "resources": [
+    {
+      "type": "Microsoft.Authorization/policyDefinitions",
+      "name": "[variables('policyName')]",
+      "apiVersion": "2019-09-01",
+      "properties": {
+        "displayName": "[variables('policyDisplayName')]",
+        "policyType": "Custom",
+        "description": "[variables('policyDescription')]",
+        "metadata": "[variables('metadata')]",
+        "mode": "All",
+        "parameters": {
+          "ownerRoleDefId": {
+            "type": "string",
+            "defaultValue": "8e3af657-a8ff-443c-a75c-2fe8c4bcb635",
+            "metadata": {
+              "description": "Role Definition ID of built-in Owner Role",
+              "displayName": "Role Definition ID of built-in Owner Role"
+            }
+          },
+          "cloudOwnerGroupId": {
+            "type": "string",
+            "defaultValue": "e9a94e3f-8474-464a-bc12-5f5f71e0aedb",
+            "metadata": {
+              "description": "ID of Cloud Owner group in AAD",
+              "displayName": "ID of Cloud Owner group in AAD"
+            }
+          },
+          "effect": {
+            "type": "string",
+            "metadata": {
+              "displayName": "Effect",
+              "description": "Effect of this Azure Policy - Audit, Deny or Disabled"
+            },
+            "allowedValues": ["Audit", "Deny", "Disabled"]
+          }
+        },
+        "policyRule": {
+          "if": {
+            "anyOf": [
+              {
+                "allOf": [
+                  {
+                    "field": "type",
+                    "equals": "Microsoft.Authorization/roleAssignments"
+                  },
+                  {
+                    "field": "Microsoft.Authorization/roleAssignments/roleDefinitionId",
+                    "contains": "[[parameters('ownerRoleDefId')]"
+                  },
+                  {
+                    "field": "Microsoft.Authorization/roleAssignments/principalId",
+                    "notEquals": "[[parameters('cloudOwnerGroupId')]"
+                  }
+                ]
+              }
+            ]
+          },
+          "then": {
+            "effect": "[[parameters('effect')]"
+          }
+        }
+      }
+    }
+  ]
+}

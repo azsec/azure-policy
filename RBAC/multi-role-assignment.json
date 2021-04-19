@@ -1,91 +1,90 @@
 {
-    "name": "deny-custom-rbac-assignment",
-    "properties": {
-      "displayName": "deny-custom-rbac-assignment",
-      "description": "This policy is used to prevent custom RBAC roles from accidentally being assigned",
-      "metadata": {
-        "category": "Identity"
+  "name": "deny-custom-rbac-assignment",
+  "properties": {
+    "displayName": "deny-custom-rbac-assignment",
+    "description": "This policy is used to prevent custom RBAC roles from accidentally being assigned",
+    "metadata": {
+      "category": "Identity"
+    },
+    "mode": "All",
+    "parameters": {
+      "cloudAdminRoleDefId": {
+        "type": "string",
+        "metadata": {
+          "description": "Role Definition ID of Cloud Admin Role",
+          "displayName": "Role Definition ID of Cloud Admin Role"
+        }
       },
-      "mode": "All",
-      "parameters": {
-        "cloudAdminRoleDefId": {
-          "type": "string",
-          "metadata": {
-            "description": "Role Definition ID of Cloud Admin Role",
-            "displayName": "Role Definition ID of Cloud Admin Role"
-          }
+      "cloudAdminGroupId": {
+        "type": "string",
+        "metadata": {
+          "description": "ID of Cloud Admin group in AAD",
+          "displayName": "ID of Cloud Admin group in AAD"
+        }
+      },
+      "dBAdminGroupId": {
+        "type": "string",
+        "metadata": {
+          "description": "ID of Database Admin group in AAD",
+          "displayName": "ID of Database Admin group in AAD"
+        }
+      },
+      "dBAdminRoleDefId": {
+        "type": "string",
+        "metadata": {
+          "description": "Role Definition ID of Database Admin role",
+          "displayName": "Role Definition ID of  Database Admin role"
+        }
+      },
+      "effect": {
+        "type": "string",
+        "metadata": {
+          "displayName": "Effect",
+          "description": "Effect of this Azure Policy - Audit, Deny or Disabled"
         },
-        "cloudAdminGroupId": {
-          "type": "string",
-          "metadata": {
-            "description": "ID of Cloud Admin group in AAD",
-            "displayName": "ID of Cloud Admin group in AAD"
-          }
-        },
-        "dBAdminGroupId": {
-          "type": "string",
-          "metadata": {
-            "description": "ID of Database Admin group in AAD",
-            "displayName": "ID of Database Admin group in AAD"
-          }
-        },
-        "dBAdminRoleDefId": {
-          "type": "string",
-          "metadata": {
-            "description": "Role Definition ID of Database Admin role",
-            "displayName": "Role Definition ID of  Database Admin role"
-          }
-        },
-        "effect": {
-          "type": "string",
-          "metadata": {
-            "displayName": "Effect",
-            "description": "Effect of this Azure Policy - Audit, Deny or Disabled"
+        "allowedValues": ["Audit", "Deny", "Disabled"]
+      }
+    },
+    "policyRule": {
+      "if": {
+        "anyOf": [
+          {
+            "allOf": [
+              {
+                "field": "type",
+                "equals": "Microsoft.Authorization/roleAssignments"
+              },
+              {
+                "field": "Microsoft.Authorization/roleAssignments/roleDefinitionId",
+                "contains": "[parameters('cloudAdminRoleDefId')]"
+              },
+              {
+                "field": "Microsoft.Authorization/roleAssignments/principalId",
+                "notEquals": "[parameters('cloudAdminGroupId')]"
+              }
+            ]
           },
-          "allowedValues": ["Audit", "Deny", "Disabled"]
-        }
+          {
+            "allOf": [
+              {
+                "field": "type",
+                "equals": "Microsoft.Authorization/roleAssignments"
+              },
+              {
+                "field": "Microsoft.Authorization/roleAssignments/roleDefinitionId",
+                "contains": "[parameters('dBAdminRoleDefId')]"
+              },
+              {
+                "field": "Microsoft.Authorization/roleAssignments/principalId",
+                "notEquals": "[parameters('dBAdminGroupId')]"
+              }
+            ]
+          }
+        ]
       },
-      "policyRule": {
-        "if": {
-          "anyOf": [
-            {
-              "allOf": [
-                {
-                  "field": "type",
-                  "equals": "Microsoft.Authorization/roleAssignments"
-                },
-                {
-                  "field": "Microsoft.Authorization/roleAssignments/roleDefinitionId",
-                  "contains": "[parameters('cloudAdminRoleDefId')]"
-                },
-                {
-                  "field": "Microsoft.Authorization/roleAssignments/principalId",
-                  "notEquals": "[parameters('cloudAdminGroupId')]"
-                }
-              ]
-            },
-            {
-              "allOf": [
-                {
-                  "field": "type",
-                  "equals": "Microsoft.Authorization/roleAssignments"
-                },
-                {
-                  "field": "Microsoft.Authorization/roleAssignments/roleDefinitionId",
-                  "contains": "[parameters('dBAdminRoleDefId')]"
-                },
-                {
-                  "field": "Microsoft.Authorization/roleAssignments/principalId",
-                  "notEquals": "[parameters('dBAdminGroupId')]"
-                }
-              ]
-            }
-          ]
-        },
-        "then": {
-          "effect": "[parameters('effect')]"
-        }
+      "then": {
+        "effect": "[parameters('effect')]"
       }
     }
   }
-  
+}
