@@ -7,7 +7,7 @@ query="resourcecontainers | where type == 'microsoft.resources/subscriptions' | 
 # Run az grap query to get list of subscriptions under the target management group
 # You need resource-graph extension to query Azure Resource Graph.
 # Run az extension add --name resource-graph
-subscription_ids=$(az graph query -q "$query" --query 'data[].subscriptionId' -o tsv)
+subscription_ids=$(az graph query -q "${query}" --query 'data[].subscriptionId' -o tsv)
 for subscription_id in ${subscription_ids}; do
   echo "[-] Found subscription Id: ${subscription_id}"
   echo "[-] Set Subscription context for subscription Id: ${subscription_id}"
