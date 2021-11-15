@@ -1,6 +1,6 @@
 #!/bin/bash
 # Use this script to trigger on-demand Azure Policy evaluation scan at management group.
-#  Reference: https://azsec.azurewebsites.net/2021/11/15/trigger-an-on-demand-azure-policy-evaluation-scan-at-management-group-level/
+# Reference: https://azsec.azurewebsites.net/2021/11/15/trigger-an-on-demand-azure-policy-evaluation-scan-at-management-group-level/
 target_management_group="enterprise-group"
 query="resourcecontainers | where type == 'microsoft.resources/subscriptions' | mv-expand mgAncestor = properties.managementGroupAncestorsChain | extend state = properties.state | where mgAncestor.name =~ '${target_management_group}' | where state == 'Enabled' | summarize count() by subscriptionId"
 
