@@ -1,0 +1,114 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2019-08-01/managementGroupDeploymentTemplate.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "name": {
+      "type": "string",
+      "metadata": {
+        "description": "The name of the policy"
+      }
+    },
+    "displayName": {
+      "type": "string",
+      "metadata": {
+        "description": "The display name of the policy"
+      }
+    },
+    "description": {
+      "type": "string",
+      "metadata": {
+        "description": "The description of the policy"
+      }
+    },
+    "allowedEnvironmentTagValue": {
+      "type": "array",
+      "allowedValues": [
+        "Production",
+        "Development",
+        "Test",
+        "Staging"
+      ],
+      "defaultValue": [
+        "Production",
+        "Development",
+        "Test",
+        "Staging"
+      ],
+      "metadata": {
+        "displayName": "The tag value of the environment tag for the subscription",
+        "description": "The tag value of the environment tag for the subscription"
+      }
+    },
+    "allowedSubscriptionCode": {
+      "type": "array",
+      "allowedValues": [
+        "AzSecA",
+        "AzSecB"
+      ],
+      "defaultValue": [
+        "AzSecA",
+        "AzSecB"
+      ],
+      "metadata": {
+        "displayName": "The tag value of the environment tag for the subscription",
+        "description": "The tag value of the environment tag for the subscription"
+      }
+    }
+  },
+  "resources": [
+    {
+      "type": "Microsoft.Authorization/policyDefinitions",
+      "apiVersion": "2020-03-01",
+      "name": "[parameters('name')]",
+      "properties": {
+        "policyType": "Custom",
+        "displayName": "[parameters('displayName')]",
+        "description": "[parameters('description')]",
+        "mode": "Indexed",
+        "parameters": {
+          "policyEffect": {
+            "type": "string",
+            "allowedValues": [ "audit", "deny" ]
+          },
+          "metadata": {
+            "displayName": "The policy effect mode of the subscription tagging Policy",
+            "description": "The policy effect mode of the subscription tagging Policy"
+          }
+        },
+        "policyRule": {
+          "if": {
+            "allOf": [
+              {
+                "field": "type",
+                "equals": "Microsoft.Resources/subscriptions"
+              },
+              {
+                "not": {
+                  "allOf": [
+                    {
+                      "field": "tags['Environment']",
+                      "in": "[parameters('allowedEnvironmentTagValue')]"
+                    },
+                    {
+                      "field": "tags['ApplicationTier']",
+                      "in": "[parameters('allowedSubscriptionCode')]"
+                    }
+                  ]
+                }
+              }
+            ]
+          },
+          "then": {
+            "effect": "[[parameters('policyEffect')]"
+          }
+        }
+      }
+    }
+  ],
+  "outputs": {
+    "resourceId": {
+      "type": "string",
+      "value": "[resourceId('Microsoft.Authorization/policyDefinitions', parameters('name'))]"
+    }
+  }
+}
