@@ -1,0 +1,91 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "policyExemptionName": {
+      "type": "string",
+      "metadata": {
+        "description": "Name of the policy exemption"
+      }
+    },
+    "displayName": {
+      "type": "string",
+      "metadata": {
+        "description": "Display name of the policy exemption"
+      }
+    },
+    "description": {
+      "type": "string",
+      "metadata": {
+        "description": "Description of the policy exemption"
+      }
+    },
+    "exemptionCategory": {
+      "type": "string",
+      "allowedValues": ["mitigated", "waiver"],
+      "metadata": {
+        "description": "The policy exemption category. Supported values are Waiver and Mitigated."
+      }
+    },
+    
+    "exemptionScope": {
+      "type": "string",
+      "metadata": {
+        "description": "Scope of the policy exemption such as resource Id of the storage account"
+      }
+    },
+    "policyAssignmentId": {
+      "type": "string",
+      "metadata": {
+        "description": "Policy assignment resource Id that the policy exemption is effected"
+      }
+    },
+    "expireOn": {
+      "type": "string",
+      "metadata": {
+        "description": "The expiration date and time (in UTC ISO 8601 format yyyy-MM-ddTHH:mm:ssZ) of the policy exemption."
+      }
+    },
+    "requestedBy": {
+      "type": "string",
+      "metadata": {
+        "description": "Specify who requested the policy exemption"
+      }
+    },
+    "approvedBy": {
+      "type": "string",
+      "metadata": {
+        "description": "Specify who approved for the policy exemption"
+      }
+    },
+    "ticketReference": {
+      "type": "string",
+      "metadata": {
+        "description": "Specify ticket reference number if you have ITSM e.g. ServiceNow"
+      }
+    }
+  },
+  "variables": {
+    "metadata": {
+      "requestedBy": "[parameters('requestedBy')]",
+      "approvedBy": "[parameters('approvedBy')]",
+      "ticketReference": "[parameters('ticketReference')]"
+    }
+  },
+  "resources": [
+    {
+      "type": "Microsoft.Authorization/policyExemptions",
+      "apiVersion": "2020-07-01-preview",
+      "scope": "[parameters('exemptionScope')]",
+      "name": "[parameters('policyExemptionName')]",
+      "properties": {
+        "displayName": "[parameters('displayName')]",
+        "description": "[parameters('description')]",
+        "exemptionCategory": "[parameters('exemptionCategory')]",
+        "expiresOn": "[parameters('expireOn')]",
+        "policyAssignmentId": "[parameters('policyAssignmentId')]",
+        "metadata": "[variables('metadata')]"
+      }
+    }
+  ]
+}

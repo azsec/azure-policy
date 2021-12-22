@@ -1,0 +1,36 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentParameters.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "policyExemptionName": {
+      "value": "storage-account-exemption"
+    },
+    "displayName": {
+      "value": "Storage account exemption"
+    },
+    "description": {
+      "value": "This storage account is approved to allow publicAccess temporarily"
+    },
+    "exemptionCategory": {
+      "value": "waiver"
+    },
+    "policyAssignmentId": {
+      "value": "/subscriptions/67d6179d-a99d-4ccd-8c56-4d3ff2e13349/providers/Microsoft.Authorization/policyAssignments/2ca44c27185a4776ab0a5016"
+    },
+    "exemptionScope": {
+      "value": "/subscriptions/67d6179d-a99d-4ccd-8c56-4d3ff2e13349/resourceGroups/azsec-corporate-rg/providers/Microsoft.Storage/storageAccounts/jpstoragedata"
+    },
+    "expireOn": {
+      "value": "2021-12-23T00:00:00"
+    },
+    "requestedBy": {
+      "value": "ts@azsec.net"
+    },
+    "approvedBy": {
+      "value": "AzSec"
+    },
+    "ticketReference": {
+      "value": "0123456"
+    }
+  }
+}
