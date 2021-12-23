@@ -1,6 +1,6 @@
 #!/bin/bash
 # Use this script to create a policy exemption for testing purpose.
-# Reference: https://azsec.azurewebsites.net/2021/11/15/trigger-an-on-demand-azure-policy-evaluation-scan-at-management-group-level/
+# Reference: https://azsec.azurewebsites.net/2021/12/22/notes-on-azure-policy-exemption/
 # The following script is used to create an exemption for the storage account named jpstoragedata.
 
 date=$(date +%F-%H%M%SD)
