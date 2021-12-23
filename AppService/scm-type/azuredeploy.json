@@ -1,5 +1,5 @@
 {
-  "$schema": "https://schema.management.azure.com/schemas/2019-08-01/managementGroupDeploymentTemplate.json#",
+  "$schema": "https://schema.management.azure.com/schemas/2018-05-01/subscriptionDeploymentTemplate.json#",
   "contentVersion": "1.0.0.0",
   "parameters": {
     "name": {
@@ -18,40 +18,6 @@
       "type": "string",
       "metadata": {
         "description": "The description of the policy"
-      }
-    },
-    "allowedEnvironmentTagValue": {
-      "type": "array",
-      "allowedValues": [
-        "Production",
-        "Development",
-        "Test",
-        "Staging"
-      ],
-      "defaultValue": [
-        "Production",
-        "Development",
-        "Test",
-        "Staging"
-      ],
-      "metadata": {
-        "displayName": "The tag value of the environment tag for the subscription",
-        "description": "The tag value of the environment tag for the subscription"
-      }
-    },
-    "allowedSubscriptionCode": {
-      "type": "array",
-      "allowedValues": [
-        "AzSecA",
-        "AzSecB"
-      ],
-      "defaultValue": [
-        "AzSecA",
-        "AzSecB"
-      ],
-      "metadata": {
-        "displayName": "The tag value of the environment tag for the subscription",
-        "description": "The tag value of the environment tag for the subscription"
       }
     }
   },
@@ -80,26 +46,24 @@
             "allOf": [
               {
                 "field": "type",
-                "equals": "Microsoft.Resources/subscriptions"
+                "equals": "Microsoft.Web/sites"
               },
               {
-                "not": {
-                  "allOf": [
-                    {
-                      "field": "tags['Environment']",
-                      "in": "[parameters('allowedEnvironmentTagValue')]"
-                    },
-                    {
-                      "field": "tags['ApplicationTier']",
-                      "in": "[parameters('allowedSubscriptionCode')]"
-                    }
-                  ]
-                }
+                "field": "kind",
+                "like": "app*"
               }
             ]
           },
           "then": {
-            "effect": "[[parameters('policyEffect')]"
+            "effect": "[[parameters('policyEffect')]",
+            "details": {
+              "type": "Microsoft.Web/sites/config",
+              "name": "web",
+              "existenceCondition": {
+                "field": "Microsoft.Web/sites/config/scmType",
+                "notEquals": "LocalGit"
+              }
+            }
           }
         }
       }

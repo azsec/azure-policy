@@ -1,0 +1,15 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentParameters.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "name": {
+            "value": "audit-web-app-scm-type"
+        },
+        "displayName": {
+            "value": "Audit Web App Scm Type"
+        },
+        "description": {
+            "value": "This policy is used to audit if an Azure App Service is configured with Local Git"
+        }
+    }
+}
