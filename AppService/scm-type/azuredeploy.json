@@ -34,7 +34,7 @@
         "parameters": {
           "policyEffect": {
             "type": "string",
-            "allowedValues": ["auditifnotexist", "deny"],
+            "allowedValues": ["AuditIfNotExists", "Disabled"],
             "metadata": {
               "displayName": "The policy effect mode of the subscription tagging Policy",
               "description": "The policy effect mode of the subscription tagging Policy"
@@ -43,16 +43,8 @@
         },
         "policyRule": {
           "if": {
-            "allOf": [
-              {
-                "field": "type",
-                "equals": "Microsoft.Web/sites"
-              },
-              {
-                "field": "kind",
-                "like": "app*"
-              }
-            ]
+            "field": "type",
+            "equals": "Microsoft.Web/sites"
           },
           "then": {
             "effect": "[[parameters('policyEffect')]",
