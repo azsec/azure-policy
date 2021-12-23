@@ -36,8 +36,8 @@
             "type": "string",
             "allowedValues": ["AuditIfNotExists", "Disabled"],
             "metadata": {
-              "displayName": "The policy effect mode of the subscription tagging Policy",
-              "description": "The policy effect mode of the subscription tagging Policy"
+              "displayName": "The policy effect mode",
+              "description": "The policy effect mode"
             }
           }
         },
