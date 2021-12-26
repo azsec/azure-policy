@@ -1,0 +1,70 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2019-08-01/managementGroupDeploymentTemplate.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "name": {
+      "type": "string",
+      "metadata": {
+        "description": "The name of the policy"
+      }
+    },
+    "displayName": {
+      "type": "string",
+      "metadata": {
+        "description": "The display name of the policy"
+      }
+    },
+    "description": {
+      "type": "string",
+      "metadata": {
+        "description": "The description of the policy"
+      }
+    }
+  },
+  "resources": [
+    {
+      "type": "Microsoft.Authorization/policyDefinitions",
+      "apiVersion": "2020-03-01",
+      "name": "[parameters('name')]",
+      "properties": {
+        "policyType": "Custom",
+        "displayName": "[parameters('displayName')]",
+        "description": "[parameters('description')]",
+        "mode": "Indexed",
+        "parameters": {
+          "policyEffect": {
+            "type": "string",
+            "allowedValues": ["AuditIfNotExists", "Disabled"],
+            "metadata": {
+              "displayName": "The policy effect mode",
+              "description": "The policy effect mode"
+            }
+          }
+        },
+        "policyRule": {
+          "if": {
+            "field": "type",
+            "equals": "Microsoft.Web/sites"
+          },
+          "then": {
+            "effect": "[[parameters('policyEffect')]",
+            "details": {
+              "type": "Microsoft.Web/sites/config",
+              "name": "web",
+              "existenceCondition": {
+                "field": "Microsoft.Web/sites/config/scmType",
+                "notEquals": "LocalGit"
+              }
+            }
+          }
+        }
+      }
+    }
+  ],
+  "outputs": {
+    "resourceId": {
+      "type": "string",
+      "value": "[resourceId('Microsoft.Authorization/policyDefinitions', parameters('name'))]"
+    }
+  }
+}
