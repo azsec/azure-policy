@@ -3,11 +3,11 @@
 # Reference: https://azsec.azurewebsites.net/2021/11/15/trigger-an-on-demand-azure-policy-evaluation-scan-at-management-group-level/
 target_management_group="enterprise-group"
 query="resourcecontainers | where type == 'microsoft.resources/subscriptions' | mv-expand mgAncestor = properties.managementGroupAncestorsChain | extend state = properties.state | where mgAncestor.name =~ '${target_management_group}' | where state == 'Enabled' | summarize count() by subscriptionId"
-root_management_group_id = "root-mg-123456"
+root_management_group_id="root-mg-123456"
 # Run az grap query to get list of subscriptions under the target management group
 # You need resource-graph extension to query Azure Resource Graph.
 # Run az extension add --name resource-graph
-subscription_ids=$(az graph query -q "${query}" --management-groups "${root_management_group_id}"--query 'data[].subscriptionId' -o tsv)
+subscription_ids=$(az graph query -q "${query}" --management-groups "${root_management_group_id}" --query 'data[].subscriptionId' -o tsv)
 for subscription_id in ${subscription_ids}; do
   echo "[-] Found subscription Id: ${subscription_id}"
   echo "[-] Set Subscription context for subscription Id: ${subscription_id}"
